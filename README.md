@@ -25,7 +25,7 @@
 
 ## Introduction
 
-This is the repository of [Visual Speech Recognition for Multiple Languages](https://arxiv.org/abs/2202.13084), which is the successor of [End-to-End Audio-Visual Speech Recognition with Conformers](https://arxiv.org/abs/2102.06657). By using this repository, you can achieve the performance of 19.1%, 1.0% and 0.9% WER for automatic, visual, and audio-visual speech recognition (ASR, VSR, and AV-ASR) on LRS3.
+Repo นี้ได้นำ Model Audio-Visual Speech Recognition มาทำให้การสร้างไฟล์ subtitle และ embleded subtitle file เข้ากับตัว original video
 
 ## Tutorial
 
@@ -33,22 +33,19 @@ We provide a tutorial [![Open In Colab](https://colab.research.google.com/assets
 
 ## Demo
 
-English -> Mandarin -> Spanish   |    French -> Portuguese -> Italian  |
+|            Before              |                After                |
 :-------------------------------:|:------------------------------------:
-<img src='doc/vsr_1.gif' title='vsr1' style='max-width:320px'></img>  |  <img src='doc/vsr_2.gif' title='vsr2' style='max-width:320px'></img>  |
+<img src='doc/demo.gif' title='before' style='max-width:320px'></img>  |  <img src='doc/demo_embled.gif' title='after' style='max-width:320px'></img>  |
 
-<div align="center">
 
-[Youtube](https://youtu.be/FIau-6JA9Po) |
-[Bilibili](https://www.bilibili.com/video/BV1Wu411D7oP)
-</div>
 
 ## Preparation
 1. Clone the repository and enter it locally:
 
 ```Shell
-git clone https://github.com/mpc001/Visual_Speech_Recognition_for_Multiple_Languages
-cd Visual_Speech_Recognition_for_Multiple_Languages
+git clone https://github.com/DreamThora/AVSR_Create_Subtitle.git
+cd AVSR_Create_Subtitle
+cd AVSR-Model
 ```
 
 2. Setup the environment.
@@ -57,55 +54,31 @@ conda create -y -n autoavsr python=3.8
 conda activate autoavsr
 ```
 
-3. Install pytorch, torchvision, and torchaudio by following instructions [here](https://pytorch.org/get-started/), and install all packages:
+3. Install all packages:
 
 ```Shell
 pip install -r requirements.txt
 conda install -c conda-forge ffmpeg
 ```
 
-4. Download and extract a pre-trained model and/or language model from [model zoo](#Model-Zoo) to:
+4. Download and extract a pre-trained model AVSR Model from [model zoo](#Model-Zoo) to:
 
-- `./benchmarks/${dataset}/models`
+- `./benchmarks/LRS3/models`
 
-- `./benchmarks/${dataset}/language_models`
-
-5. [For VSR and AV-ASR] Install [RetinaFace](./tools) or [MediaPipe](https://pypi.org/project/mediapipe/) tracker.
-
-### Benchmark evaluation
-
-```Shell
-python eval.py config_filename=[config_filename] \
-               labels_filename=[labels_filename] \
-               data_dir=[data_dir] \
-               landmarks_dir=[landmarks_dir]
-```
-
-- `[config_filename]` is the model configuration path, located in `./configs`.
-
-- `[labels_filename]` is the labels path, located in `${lipreading_root}/benchmarks/${dataset}/labels`.
-
-- `[data_dir]` and `[landmarks_dir]` are the directories for original dataset and corresponding landmarks.
-
-- `gpu_idx=-1` can be added to switch from `cuda:0` to `cpu`.
 
 ### Speech prediction
 
+1. Save video file to './AVSR-Model/files/origin_video
+
+2.
 ```Shell
-python infer.py config_filename=[config_filename] data_filename=[data_filename]
+python infer.py [data_filename]
+Example. python infer.py demo.mp4
 ```
 
-- `data_filename` is the path to the audio/video file.
+- `data_filename` is the video file name.
 
-- `detector=mediapipe` can be added to switch from RetinaFace to MediaPipe tracker.
 
-### Mouth ROIs cropping
-
-```Shell
-python crop_mouth.py data_filename=[data_filename] dst_filename=[dst_filename]
-```
-
-- `dst_filename` is the path where the cropped mouth will be saved.
 
 ## Model zoo
 
