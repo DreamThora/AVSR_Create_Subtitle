@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  fastapi-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - /home/diplab/Desktop/Lip_reading_Project_Web/pooh:/ML_proc/AVSR-Model/files
+    ports:
+      - "8082:8082"
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    deploy:
+      resources:
+        reservations:
+          devices: 
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    privileged: true
+    command: bash -c "cd ml && uvicorn main:app --proxy-headers --host 0.0.0.0 --port 8082"
