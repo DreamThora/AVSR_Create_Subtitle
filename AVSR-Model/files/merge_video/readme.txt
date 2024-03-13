@@ -1,0 +1,1 @@
+this folder contain original video that embleded with subtitle

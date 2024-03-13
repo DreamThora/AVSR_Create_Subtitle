@@ -1,0 +1,1 @@
+this folder contain thai subtitle file
