@@ -34,23 +34,27 @@ def main(filename):
     dur = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) / cap.get(cv2.CAP_PROP_FPS)
     n_loop = math.ceil(dur/30)
     sentence = []
+    predicted_chunk = 3 # ช่วงเวลาในส่วนของวิดีโอที่จะทำการ predict เช่น 3 = predicted ทีละ 3 วินาที โดยจะมีค่าเท่ากับความยาว 1 ช่วงของ subtitle
+    pred_vid = predicted_chunk*25
+    pred_audio = predicted_chunk*16000
 
+    
     #get vid and sound
     for i in range(n_loop):
         data = inference_pipeline(data_filename, i=i)
         fps = data[0].size(dim=1)
-        if fps > 75:
-            n_loop = math.ceil(fps/75)
+        if fps > pred_vid:
+            n_loop = math.ceil(fps/pred_vid)
             for i in range(n_loop):
                 if i+1 == n_loop:
-                    vid = data[0][:, 75*i : -1, :, :]
-                    sound = data[1][48000 * i : -1, :]
+                    vid = data[0][:, pred_vid*i : -1, :, :]
+                    sound = data[1][pred_audio * i : -1, :]
                     tup = (vid, sound)
                     hyp = inference_pipeline.model.infer(tup)
                     sentence.append(hyp)
                 else:
-                    vid = data[0][:, 75*i : (75*i) + 74, :, :]
-                    sound = data[1][48000 * i : (48000*i) + 47999, :]
+                    vid = data[0][:, pred_vid*i : (pred_vid*i) + (pred_vid-1), :, :]
+                    sound = data[1][pred_audio * i : (pred_audio*i) + (pred_audio-1), :]
                     tup = (vid, sound)
                     hyp = inference_pipeline.model.infer(tup)
                     sentence.append(hyp)
@@ -62,7 +66,7 @@ def main(filename):
     print("*" *40)
 
     #post predicted
-    create_srt_file(sentence, output_path= subtitle_path)
+    create_srt_file(sentence, output_path= subtitle_path, duration_per_subtitle=predicted_chunk)
     merge_video_with_subtitle_ffmpeg(video_path = data_filename, subtitle_path=subtitle_path, output_path=merged_path)
     create_thumbnail(video_path=data_filename,thumbnail_path=thumbnail_path)
 

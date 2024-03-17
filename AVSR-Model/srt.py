@@ -5,8 +5,7 @@ import math
 # from moviepy.editor import VideoFileClip, AudioFileClip
 import subprocess
 
-def create_srt_file(text_list, output_path):
-    duration_per_subtitle=3
+def create_srt_file(text_list, output_path,duration_per_subtitle=None):
     with open(output_path, 'w', encoding='utf-8') as file:
         # start_time = 0
         for i, line in enumerate(text_list):
